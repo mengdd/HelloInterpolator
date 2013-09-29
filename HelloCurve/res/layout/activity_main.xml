@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <com.example.hellocurve.CurveView
+        android:id="@+id/curve"
+        android:layout_width="wrap_content"
+        android:layout_height="200dip" />
+
+    <RadioGroup
+        android:id="@+id/interpolatorGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/curve" >
+
+        <RadioButton
+            android:id="@+id/AccelerateDecelerateInterpolator"
+            android:checked="true"
+            android:text="AccelerateDecelerate" />
+
+        <RadioButton
+            android:id="@+id/AccelerateInterpolator"
+            android:text="AccelerateInterpolator" />
+
+        <RadioButton
+            android:id="@+id/AnticipateInterpolator"
+            android:text="AnticipateInterpolator" />
+
+        <RadioButton
+            android:id="@+id/AnticipateOvershootInterpolator"
+            android:text="AnticipateOvershoot" />
+
+        <RadioButton
+            android:id="@+id/BounceInterpolator"
+            android:text="BounceInterpolator" />
+
+        <RadioButton
+            android:id="@+id/CycleInterpolator"
+            android:text="CycleInterpolator" />
+
+        <RadioButton
+            android:id="@+id/DecelerateInterpolator"
+            android:text="DecelerateInterpolator" />
+
+        <RadioButton
+            android:id="@+id/LinearInterpolator"
+            android:text="LinearInterpolator" />
+
+        <RadioButton
+            android:id="@+id/OvershootInterpolator"
+            android:text="OvershootInterpolator" />
+    </RadioGroup>
+
+</RelativeLayout>
