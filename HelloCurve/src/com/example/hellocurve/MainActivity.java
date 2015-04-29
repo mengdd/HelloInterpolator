@@ -1,7 +1,12 @@
 package com.example.hellocurve;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnticipateInterpolator;
@@ -15,7 +20,14 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class MainActivity extends Activity implements CompoundButton.OnCheckedChangeListener {
+
+    public static final int ANIMATION_DURATION = 2000;
+    public static final int ANIMATION_FRAME = 20;
 
     private RadioButton mAccelerateDecelerate;
     private RadioButton mAccelerateInterpolator;
@@ -27,9 +39,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     private RadioButton mLinearInterpolator;
     private RadioButton mOvershootInterpolator;
     private CurveView mCurveView = null;
-    private float[] mXValues = new float[]{0.0f, 0.1f, 0.2f, 0.3f, 0.4f,
-            0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f};
-    private float[] mYValues = new float[11];
+    private float[] mYValues = new float[ANIMATION_DURATION / ANIMATION_FRAME];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +68,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mLinearInterpolator.setOnCheckedChangeListener(this);
         mOvershootInterpolator.setOnCheckedChangeListener(this);
 
-        mCurveView.setxValues(mXValues);
+        mCurveView.setYValues(mYValues);
 
         mLinearInterpolator.setChecked(true);
     }
@@ -105,12 +115,30 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
             return;
         }
 
-        Interpolator interpolator = getInterpolator(buttonView.getId());
-        for (int i = 0; i < mXValues.length; ++i) {
-            mYValues[i] = interpolator
-                    .getInterpolation(mXValues[i]);
-        }
-        mCurveView.setyValues(mYValues);
-        mCurveView.invalidate();
+        // 重置
+        Arrays.fill(mYValues, Float.NaN);
+
+        // 动画
+        final TimeInterpolator timeInterpolator = getInterpolator(buttonView.getId());
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
+        valueAnimator.setInterpolator(timeInterpolator);
+        valueAnimator.setDuration(ANIMATION_DURATION);
+        valueAnimator.setFrameDelay(ANIMATION_FRAME);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (Float) animation.getAnimatedValue();
+
+                // 计算 0 ~ value 的曲线
+                for (int i = 0; i < (int) Math.abs(mYValues.length * value) && i < mYValues.length; i++) {
+                    mYValues[i] = timeInterpolator.getInterpolation((float) i / mYValues.length);
+                }
+
+                mCurveView.invalidate();
+
+                Log.d("walfud", String.format("%.2f, %.2f", value, mYValues.length * value));
+            }
+        });
+        valueAnimator.start();
     }
 }

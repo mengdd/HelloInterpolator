@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -21,8 +20,10 @@ import android.view.View;
  */
 public class CurveView extends View {
 
-	private float[] xValues = null;
-	private float[] yValues = null;
+    public static final int V_GRID_COUNT = 10;
+    public static final int H_GRID_COUNT = 10;
+
+	private float[] mYValues = null;
 	private Path mPath = null;
 	private Paint mPaint = null;
 	private Paint mGridPaint = null;
@@ -87,55 +88,38 @@ public class CurveView extends View {
 		super.onDraw(canvas);
 		drawVerticalGrids(canvas);
 		drawHorizontalGrids(canvas);
-		if (null != xValues && null != yValues
-				&& xValues.length == yValues.length) {
 
-			mPath.reset();
-			// move to start point
-			mPath.moveTo(xValues[0] * mWidth, mHeightMargin + (1 - yValues[0])
-					* mUnitHeight);
-			// line to other points
-			for (int i = 1; i < xValues.length; ++i) {
-				mPath.lineTo(xValues[i] * mWidth, mHeightMargin
-						+ (1 - yValues[i]) * mUnitHeight);
-			}
+        mPath.reset();
+        // move to start point
+        mPath.moveTo(0, mHeightMargin + mUnitHeight);
+        // line to other points
+        for (int i = 0; i < mYValues.length; ++i) {
+            if (Float.isNaN(mYValues[i])) {
+                continue;
+            }
 
-		}
-
+            float x = mWidth * ((float) (i + 1) / mYValues.length);
+            mPath.lineTo(x, mHeightMargin + mUnitHeight * (1 - mYValues[i]));
+        }
 		canvas.drawPath(mPath, mPaint);
-
 	}
 
+
+    private void drawVerticalGrids(Canvas canvas) {
+        for (int i = 0; i < V_GRID_COUNT; ++i) {
+            float x = mWidth * ((float) i / V_GRID_COUNT);
+            canvas.drawLine(x, 0, x, mHeight, mGridPaint);
+        }
+    }
 	private void drawHorizontalGrids(Canvas canvas) {
-		for (int i = 0; i < xValues.length; ++i) {
-			canvas.drawLine(0, mHeightMargin + xValues[i] * mUnitHeight,
-					mWidth, mHeightMargin + xValues[i] * mUnitHeight,
-					mGridPaint);
+		for (int i = 0; i < H_GRID_COUNT; ++i) {
+            float y = mHeightMargin + mUnitHeight * ((float) i / H_GRID_COUNT);
+			canvas.drawLine(0, y, mWidth, y, mGridPaint);
 		}
 	}
 
-	private void drawVerticalGrids(Canvas canvas) {
-
-		for (int i = 0; i < xValues.length; ++i) {
-			canvas.drawLine(xValues[i] * mWidth, 0, xValues[i] * mWidth,
-					mHeight, mGridPaint);
-		}
-	}
-
-	public float[] getxValues() {
-		return xValues;
-	}
-
-	public void setxValues(float[] xValues) {
-		this.xValues = xValues;
-	}
-
-	public float[] getyValues() {
-		return yValues;
-	}
-
-	public void setyValues(float[] yValues) {
-		this.yValues = yValues;
+	public void setYValues(float[] yValues) {
+        mYValues = yValues;
 	}
 
 }
