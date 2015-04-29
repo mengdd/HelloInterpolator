@@ -26,15 +26,15 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     private RadioButton mDecelerateInterpolator;
     private RadioButton mLinearInterpolator;
     private RadioButton mOvershootInterpolator;
-	private CurveView mCurveView = null;
-	private float[] mXValues = new float[] { 0.0f, 0.1f, 0.2f, 0.3f, 0.4f,
-			0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f };
-	private float[] mYValues = new float[11];
+    private CurveView mCurveView = null;
+    private float[] mXValues = new float[]{0.0f, 0.1f, 0.2f, 0.3f, 0.4f,
+            0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f};
+    private float[] mYValues = new float[11];
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         mAccelerateDecelerate = (RadioButton) findViewById(R.id.AccelerateDecelerateInterpolator);
         mAccelerateInterpolator = (RadioButton) findViewById(R.id.AccelerateInterpolator);
@@ -58,46 +58,46 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mLinearInterpolator.setOnCheckedChangeListener(this);
         mOvershootInterpolator.setOnCheckedChangeListener(this);
 
-		mCurveView.setxValues(mXValues);
+        mCurveView.setxValues(mXValues);
 
         mLinearInterpolator.setChecked(true);
-	}
+    }
 
-	private Interpolator getInterpolator(int checkedId) {
+    private Interpolator getInterpolator(int checkedId) {
 
-		switch (checkedId) {
-		case R.id.AccelerateDecelerateInterpolator:
-			return new AccelerateDecelerateInterpolator();
+        switch (checkedId) {
+            case R.id.AccelerateDecelerateInterpolator:
+                return new AccelerateDecelerateInterpolator();
 
-		case R.id.AccelerateInterpolator:
-			return new AccelerateInterpolator();
+            case R.id.AccelerateInterpolator:
+                return new AccelerateInterpolator();
 
-		case R.id.AnticipateInterpolator:
-			return new AnticipateInterpolator();
+            case R.id.AnticipateInterpolator:
+                return new AnticipateInterpolator();
 
-		case R.id.AnticipateOvershootInterpolator:
-			return new AnticipateOvershootInterpolator();
+            case R.id.AnticipateOvershootInterpolator:
+                return new AnticipateOvershootInterpolator();
 
-		case R.id.BounceInterpolator:
-			return new BounceInterpolator();
+            case R.id.BounceInterpolator:
+                return new BounceInterpolator();
 
-		case R.id.CycleInterpolator:
-			return new CycleInterpolator(2);
+            case R.id.CycleInterpolator:
+                return new CycleInterpolator(2);
 
-		case R.id.DecelerateInterpolator:
-			return new DecelerateInterpolator();
+            case R.id.DecelerateInterpolator:
+                return new DecelerateInterpolator();
 
-		case R.id.LinearInterpolator:
-			return new LinearInterpolator();
+            case R.id.LinearInterpolator:
+                return new LinearInterpolator();
 
-		case R.id.OvershootInterpolator:
-			return new OvershootInterpolator();
+            case R.id.OvershootInterpolator:
+                return new OvershootInterpolator();
 
-		default:
-			return null;
-		}
+            default:
+                return null;
+        }
 
-	}
+    }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
