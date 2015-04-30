@@ -115,9 +115,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
             return;
         }
 
-        // 重置
-        Arrays.fill(mYValues, Float.NaN);
-
         // 动画
         final TimeInterpolator timeInterpolator = getInterpolator(buttonView.getId());
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
@@ -128,6 +125,9 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float value = (Float) animation.getAnimatedValue();
+
+                // 重置
+                Arrays.fill(mYValues, Float.NaN);
 
                 // 计算 0 ~ value 的曲线
                 for (int i = 0; i < (int) Math.abs(mYValues.length * value) && i < mYValues.length; i++) {

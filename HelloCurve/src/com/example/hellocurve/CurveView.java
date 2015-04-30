@@ -95,7 +95,7 @@ public class CurveView extends View {
         // line to other points
         for (int i = 0; i < mYValues.length; ++i) {
             if (Float.isNaN(mYValues[i])) {
-                continue;
+                break;
             }
 
             float x = mWidth * ((float) (i + 1) / mYValues.length);
