@@ -1,8 +1,12 @@
 package com.example.hellocurve;
 
-import android.os.Bundle;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.view.Menu;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnticipateInterpolator;
@@ -13,85 +17,128 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
 
-public class MainActivity extends Activity {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-	private RadioGroup mInterpolatorGroup = null;
-	private CurveView mCurveView = null;
-	private float[] mXValues = new float[] { 0.0f, 0.1f, 0.2f, 0.3f, 0.4f,
-			0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f };
-	private float[] mYValues = new float[11];
+public class MainActivity extends Activity implements CompoundButton.OnCheckedChangeListener {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		mInterpolatorGroup = (RadioGroup) findViewById(R.id.interpolatorGroup);
-		mCurveView = (CurveView) findViewById(R.id.curve);
-		mCurveView.setxValues(mXValues);
-		mInterpolatorGroup
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+    public static final int ANIMATION_DURATION = 2000;
+    public static final int ANIMATION_FRAME = 20;
 
-					@Override
-					public void onCheckedChanged(RadioGroup group, int checkedId) {
-						Interpolator interpolator = getInterpolator();
-						for (int i = 0; i < mXValues.length; ++i) {
-							mYValues[i] = interpolator
-									.getInterpolation(mXValues[i]);
-						}
-						mCurveView.setyValues(mYValues);
-						mCurveView.invalidate();
-					}
-				});
+    private RadioButton mAccelerateDecelerate;
+    private RadioButton mAccelerateInterpolator;
+    private RadioButton mAnticipateInterpolator;
+    private RadioButton mAnticipateOvershoot;
+    private RadioButton mBounceInterpolator;
+    private RadioButton mCycleInterpolator;
+    private RadioButton mDecelerateInterpolator;
+    private RadioButton mLinearInterpolator;
+    private RadioButton mOvershootInterpolator;
+    private CurveView mCurveView = null;
+    private float[] mYValues = new float[ANIMATION_DURATION / ANIMATION_FRAME];
 
-		mInterpolatorGroup.check(R.id.LinearInterpolator);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-	}
+        mAccelerateDecelerate = (RadioButton) findViewById(R.id.AccelerateDecelerateInterpolator);
+        mAccelerateInterpolator = (RadioButton) findViewById(R.id.AccelerateInterpolator);
+        mAnticipateInterpolator = (RadioButton) findViewById(R.id.AnticipateInterpolator);
+        mAnticipateOvershoot = (RadioButton) findViewById(R.id.AnticipateOvershootInterpolator);
+        mBounceInterpolator = (RadioButton) findViewById(R.id.BounceInterpolator);
+        mCycleInterpolator = (RadioButton) findViewById(R.id.CycleInterpolator);
+        mDecelerateInterpolator = (RadioButton) findViewById(R.id.DecelerateInterpolator);
+        mLinearInterpolator = (RadioButton) findViewById(R.id.LinearInterpolator);
+        mOvershootInterpolator = (RadioButton) findViewById(R.id.OvershootInterpolator);
+        mCurveView = (CurveView) findViewById(R.id.curve);
 
-	private Interpolator getInterpolator() {
+        //
+        mAccelerateDecelerate.setOnCheckedChangeListener(this);
+        mAccelerateInterpolator.setOnCheckedChangeListener(this);
+        mAnticipateInterpolator.setOnCheckedChangeListener(this);
+        mAnticipateOvershoot.setOnCheckedChangeListener(this);
+        mBounceInterpolator.setOnCheckedChangeListener(this);
+        mCycleInterpolator.setOnCheckedChangeListener(this);
+        mDecelerateInterpolator.setOnCheckedChangeListener(this);
+        mLinearInterpolator.setOnCheckedChangeListener(this);
+        mOvershootInterpolator.setOnCheckedChangeListener(this);
 
-		int checkedId = mInterpolatorGroup.getCheckedRadioButtonId();
+        mCurveView.setYValues(mYValues);
 
-		switch (checkedId) {
-		case R.id.AccelerateDecelerateInterpolator:
-			return new AccelerateDecelerateInterpolator();
+        mLinearInterpolator.setChecked(true);
+    }
 
-		case R.id.AccelerateInterpolator:
+    private Interpolator getInterpolator(int checkedId) {
 
-			return new AccelerateInterpolator();
+        switch (checkedId) {
+            case R.id.AccelerateDecelerateInterpolator:
+                return new AccelerateDecelerateInterpolator();
 
-		case R.id.AnticipateInterpolator:
+            case R.id.AccelerateInterpolator:
+                return new AccelerateInterpolator();
 
-			return new AnticipateInterpolator();
+            case R.id.AnticipateInterpolator:
+                return new AnticipateInterpolator();
 
-		case R.id.AnticipateOvershootInterpolator:
-			return new AnticipateOvershootInterpolator();
+            case R.id.AnticipateOvershootInterpolator:
+                return new AnticipateOvershootInterpolator();
 
-		case R.id.BounceInterpolator:
-			return new BounceInterpolator();
+            case R.id.BounceInterpolator:
+                return new BounceInterpolator();
 
-		case R.id.CycleInterpolator:
+            case R.id.CycleInterpolator:
+                return new CycleInterpolator(2);
 
-			return new CycleInterpolator(2);
+            case R.id.DecelerateInterpolator:
+                return new DecelerateInterpolator();
 
-		case R.id.DecelerateInterpolator:
+            case R.id.LinearInterpolator:
+                return new LinearInterpolator();
 
-			return new DecelerateInterpolator();
+            case R.id.OvershootInterpolator:
+                return new OvershootInterpolator();
 
-		case R.id.LinearInterpolator:
-			return new LinearInterpolator();
+            default:
+                return null;
+        }
 
-		case R.id.OvershootInterpolator:
-			return new OvershootInterpolator();
+    }
 
-		default:
-			break;
-		}
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (!isChecked) {
+            return;
+        }
 
-		return null;
+        // 动画
+        final TimeInterpolator timeInterpolator = getInterpolator(buttonView.getId());
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
+        valueAnimator.setInterpolator(timeInterpolator);
+        valueAnimator.setDuration(ANIMATION_DURATION);
+        valueAnimator.setFrameDelay(ANIMATION_FRAME);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (Float) animation.getAnimatedValue();
 
-	}
+                // 重置
+                Arrays.fill(mYValues, Float.NaN);
 
+                // 计算 0 ~ value 的曲线
+                for (int i = 0; i < (int) Math.abs(mYValues.length * value) && i < mYValues.length; i++) {
+                    mYValues[i] = timeInterpolator.getInterpolation((float) i / mYValues.length);
+                }
+
+                mCurveView.invalidate();
+
+                Log.d("walfud", String.format("%.2f, %.2f", value, mYValues.length * value));
+            }
+        });
+        valueAnimator.start();
+    }
 }
